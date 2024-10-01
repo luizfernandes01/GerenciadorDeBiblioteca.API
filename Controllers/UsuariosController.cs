@@ -1,6 +1,7 @@
-﻿using GerenciadorDeBiblioteca.API.Entities;
+﻿
 using GerenciadorDeBiblioteca.API.Models;
 using GerenciadorDeBiblioteca.API.Persistence;
+using GerenciadorDeBiblioteca.Core.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,8 +21,10 @@ namespace GerenciadorDeBiblioteca.API.Controllers
 
         public IActionResult GetAll()
         {
+            var usuarios = _context.Usuarios.ToList();
 
-            return Ok();
+
+            return Ok(usuarios);
         }
 
         [HttpGet("{id}")]
@@ -56,6 +59,20 @@ namespace GerenciadorDeBiblioteca.API.Controllers
 
         public IActionResult Put(int id, UpdateUsuarioInputModel model)
         {
+
+            var usuario = _context.Usuarios.SingleOrDefault();
+
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            usuario.Update(model.Nome, model.Email);
+
+            _context.Usuarios.Update(usuario);
+            _context.SaveChanges();
+
+
             return Ok();
         }
 
@@ -63,6 +80,12 @@ namespace GerenciadorDeBiblioteca.API.Controllers
 
         public IActionResult Delete(int id)
         {
+            var usuario = _context.Usuarios.SingleOrDefault(u => u.Id == id);
+
+            if (usuario == null)
+            {
+                return NotFound();
+            }
             return Ok();
         }
     }

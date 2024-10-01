@@ -1,6 +1,7 @@
-﻿using GerenciadorDeBiblioteca.API.Entities;
+﻿
 using GerenciadorDeBiblioteca.API.Models;
 using GerenciadorDeBiblioteca.API.Persistence;
+using GerenciadorDeBiblioteca.Core.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,6 +48,10 @@ namespace GerenciadorDeBiblioteca.API.Controllers
 
         public IActionResult Renovacao(int id)
         {
+            var emprestimo = _context.Emprestimos.FirstOrDefault(emp => emp.Id == id);
+
+           
+
             return Ok();
         }
 
@@ -54,14 +59,14 @@ namespace GerenciadorDeBiblioteca.API.Controllers
 
         public IActionResult Put(int id,UpdateEmprestimoInputModel model)
         {
+            var emprestimo = _context.Emprestimos.SingleOrDefault(emp => emp.Id == id);
+
             return BadRequest();
         }
 
-        [HttpDelete("{id}")]
+     
 
-        public IActionResult Delete(int id)
-        {
-            return Ok();
-        }
+      
+       
     }
 }

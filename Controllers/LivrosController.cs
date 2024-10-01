@@ -1,5 +1,7 @@
-﻿using GerenciadorDeBiblioteca.API.Models;
+﻿
+using GerenciadorDeBiblioteca.API.Models;
 using GerenciadorDeBiblioteca.API.Persistence;
+using GerenciadorDeBiblioteca.Application.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,60 +12,59 @@ namespace GerenciadorDeBiblioteca.API.Controllers
     public class LivrosController : ControllerBase
     {
         private readonly GerenciadorDeBibliotecaDbContext _context;
-        public LivrosController(GerenciadorDeBibliotecaDbContext context)
+        private readonly ILivroService _service;
+        public LivrosController(GerenciadorDeBibliotecaDbContext context,ILivroService service)
         {
             _context = context;
+            _service = service;
         }
 
         [HttpGet]
 
         public IActionResult GetAll()
         {
-            var livros = _context.Livros.Where(l => !l.IsDeleted).ToList();
+            var result = _service.GetAll();
 
-            var model = livros.Select( LivroItemViewModel.FromEntity).ToList();
+            return Ok(result);
 
-            return Ok(model);
-        }
+        }        
 
         [HttpGet("{id}")]
 
         public IActionResult GetById(int id)
         {
-            var livro = _context.Livros.SingleOrDefault(l => l.Id == id);
+          var result = _service.GetById(id);
 
-            var model = LivroViewModel.FromEntity(livro);
+            if(!result.IsSuccess)
+            {
+                return BadRequest(result.Message);
+            }
 
-            return Ok(model);
+            return Ok(result);
+                           
         }
 
         [HttpPost]
 
         public IActionResult Post(CreateLivroInputModel model)
         {
-            var livro = model.ToEntity();
+            var result = _service.Insert(model);
 
-            _context.Livros.Add(livro);
-            _context.SaveChanges();
-
-            return CreatedAtAction(nameof(GetById),new { id = 1}, model);
+            
+            return CreatedAtAction(nameof(GetById),new { id = result.Data }, model);
         }
 
         [HttpPut("{id}")]
 
         public IActionResult Put(int id,UpdateLivroInputModel model)
         {
-            var livro = _context.Livros.SingleOrDefault(l => l.Id == id);
+            var result = _service.Update(model);
 
-            if (livro == null)
+            if (!result.IsSuccess)
             {
-                return NotFound();
+                return BadRequest(result.Message);
             }
-
-            livro.Update(model.Titulo, model.Autor, model.ISBN, model.AnoDePublicacao);
-
-            _context.Livros.Update(livro);
-            _context.SaveChanges();
+                                            
 
 
             return NoContent();
@@ -73,13 +74,15 @@ namespace GerenciadorDeBiblioteca.API.Controllers
 
         public IActionResult Delete(int id)
         {
-            var livro = _context.Livros.SingleOrDefault(l => l.Id == id);
+            var result = _service.Delete(id);
 
-            if (livro == null)
+            if (!result.IsSuccess)
             {
-                return NotFound();
+                return BadRequest(result.Message);
             }
-            return Ok();
+
+
+            return NoContent();
         }
     }
 }

@@ -21,4 +21,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GerenciadorDeBiblioteca.Application\GerenciadorDeBiblioteca.Application.csproj" />
+    <ProjectReference Include="..\GerenciadorDeBiblioteca.Core\GerenciadorDeBiblioteca.Core.csproj" />
+    <ProjectReference Include="..\GerenciadorDeBiblioteca.Infrastructure\GerenciadorDeBiblioteca.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

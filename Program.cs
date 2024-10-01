@@ -1,4 +1,5 @@
 using GerenciadorDeBiblioteca.API.Persistence;
+using GerenciadorDeBiblioteca.Application;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,8 @@ var connectionString = builder.Configuration.GetConnectionString("GerenciadorDeB
 
 builder.Services.AddDbContext<GerenciadorDeBibliotecaDbContext>(o => o.UseSqlServer(connectionString));
 
+builder.Services
+    .AddApplication();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
